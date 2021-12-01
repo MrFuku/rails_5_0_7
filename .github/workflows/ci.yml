@@ -15,11 +15,11 @@ jobs:
         ports:
           - "3306:3306"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
     - name: Install dependent libralies
       run: sudo apt install -y libmysqlclient-dev
     - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@be0cc84c1b9b4d3df759de62438d880db6645e3b
       with:
         ruby-version: 2.4.10
         bundler: default
@@ -36,4 +36,4 @@ jobs:
       run: bundle exec rspec
     - name: Archive rspec result screenshots
       if: failure()
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
