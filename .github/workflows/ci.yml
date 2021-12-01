@@ -1,0 +1,39 @@
+name: Ruby
+on: push
+jobs:
+  run_test:
+    runs-on: ubuntu-18.04
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DB: rails_5_0_7_test
+          MYSQL_USER: root
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_PASSWORD:
+        ports:
+          - "3306:3306"
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependent libralies
+      run: sudo apt install -y libmysqlclient-dev
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.4.10
+        bundler: default
+        bundler-cache: true
+    - name: Setup Database
+      run: |
+        cp config/database.yml.ci config/database.yml
+        sudo systemctl start mysql
+        bundle exec rake db:create
+        bundle exec rake db:migrate
+      env:
+        RAILS_ENV: test
+    - name: Run tests
+      run: bundle exec rspec
+    - name: Archive rspec result screenshots
+      if: failure()
+      uses: actions/upload-artifact@v1
